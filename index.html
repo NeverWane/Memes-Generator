@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <title>Memes Generator</title>
+</head>
+
+<body class="main-layout" onload="onInit()">
+    <header class="main-header full main-layout">
+        <nav class="navbar">
+            <ul class="nav-items flex align-center space-between">
+                <li class="nav-item logo nav-logo flex align-center" href="#">memegen</li>
+                <ul class="nav-item nav-links flex align-center">
+                    <li class="nav-link nav-gallery flex align-center">gallery</li>
+                    <li class="nav-link nav-new flex align-center">new</li>
+                </ul>
+            </ul>
+        </nav>
+    </header>
+    <main class="main-content flex align-center">
+        <canvas id="canvas" class="canvas">
+        </canvas>
+        <form class="settings-container" onchange="onSetSettings(this)">
+            <label for="caption"><button type="submit" class="btn-submit">Add</button></label>
+            <input type="text" placeholder="Enter Caption" name="caption" id="caption">
+        </form>
+    </main>
+
+    <script src="js/service/storage.service.js"></script>
+    <script src="js/service/memes.service.js"></script>
+    <script src="js/memes.controller.js"></script>
+</body>
+
+</html>

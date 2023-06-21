@@ -1,0 +1,17 @@
+.main-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    gap: 30px;
+}
+
+.settings {
+    width: fit-content;
+}
+
+.canvas {
+    display: block;
+    touch-action: none;
+    background-color: beige;
+}

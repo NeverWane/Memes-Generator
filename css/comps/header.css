@@ -1,0 +1,40 @@
+.main-header {
+    width: 100%;
+    height: var(--header-height);
+    background-color: var(--clr-header);
+}
+
+.navbar {
+    height: 100%;
+    border-inline: 1px solid var(--clr-nav-border);
+}
+
+.nav-items {
+    height: 100%;
+}
+
+.nav-item {
+    height: 100%;
+    align-self: center;
+    text-transform: uppercase;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+.nav-link {
+    height: 100%;
+    padding-inline: 1em;
+    color: var(--clr-link);
+    border-inline-start: 1px solid var(--clr-nav-border);
+    transition: 0.4s;
+}
+
+.nav-link:hover {
+    color: var(--clr-link-hover);
+}
+
+.logo {
+    font-size: 2em;
+    padding-inline: 0.5em;
+    color: var(--clr-logo);
+}
