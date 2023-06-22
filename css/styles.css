@@ -10,6 +10,7 @@
 /* COMPONENTS */
 @import url("comps/header.css");
 @import url("comps/content.css");
+@import url("comps/canvas.css");
 
 /* MQ */
 @import url("basics/mq.css");

@@ -2,7 +2,7 @@
     display: flex;
 }
 
-.flex-columns {
+.flex-column {
     flex-direction: column;
 }
 
@@ -16,4 +16,8 @@
 
 .space-around {
     justify-content: space-around;
+}
+
+.hide {
+    display: none;
 }

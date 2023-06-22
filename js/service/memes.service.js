@@ -1,12 +1,14 @@
 'use strict'
 
 let gMeme = null
+let gDraws = []
+let gCurrContainer = null
+let gCurrDraw = null
 
-function createMeme(settings) {
+function createMeme(img) {
     gMeme = {
-        image: settings.image,
-        settings,
-        draws: []
+        img,
+        draws: gDraws
     }
     return gMeme
 }
@@ -15,12 +17,12 @@ function getMeme() {
     return gMeme
 }
 
-function updateSettings(settings) {
-    gMeme.settings = settings
+function addDraw(element, id, drawFunc) {
+    const newContainer = {element, id, draw: drawFunc}
+    gDraws.push(newContainer)
+    gCurrContainer = newContainer
 }
 
-function addDraw(pos, draw = gMeme.settings) {
-    draw.x = pos.x
-    draw.y = pos.y
-    gMeme.draws.unshift(draw)
+function getCurrContainer() {
+    return gCurrContainer
 }

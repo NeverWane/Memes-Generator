@@ -1,0 +1,45 @@
+.canvas-container {
+    position: relative;
+}
+
+.caption-container {
+    position: absolute;
+    background: none;
+    left: 50%;
+    top: 5%;
+    transform: translate(-50%, 0%);
+    -webkit-text-stroke-width: 2px;
+}
+
+.move {
+    display: none;
+    width: 25px;
+    height: 25px;
+    cursor: move;
+}
+
+.caption-container:focus-within .move {
+    display: block;
+    position: absolute;
+    top: -25px;
+}
+
+.canvas-text {
+    text-align: center;
+    text-anchor: middle;
+    overflow: auto;
+    cursor: default;
+    border: none;
+}
+
+.canvas-text:focus {
+    resize: horizontal;
+    border: 2px solid var(--clr-nav-border);
+}
+
+.canvas {
+    display: block;
+    position: relative;
+    touch-action: none;
+    background-color: beige;
+}
