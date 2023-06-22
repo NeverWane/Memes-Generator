@@ -52,6 +52,13 @@ function updateRatio(maxW, maxH) {
     return gRatio
 }
 
+function resetMeme() {
+    gMeme = null
+    gCurrContainer = null
+    gDraws = []
+    gRatio = 1
+}
+
 function getRatio() {
     return gRatio
 }

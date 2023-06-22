@@ -4,6 +4,7 @@ let gCanvas
 let gCtx
 let gMouseDown = false
 let gCount = 0
+const gImages = {}
 
 const gPos = {
     x: 0,
@@ -24,10 +25,8 @@ const gCaptionStyles = ['font-family', 'font-size', 'color', '-webkit-text-strok
 function onInit() {
     gCanvas = document.querySelector('#canvas')
     gCtx = gCanvas.getContext('2d')
-    window.addEventListener('resize', onResize)
-    window.addEventListener('mouseup', onMouseUp)
     onmousemove = onMouseMove
-    loadLocalImg('images/intrusive.jpg')
+    createGallery()
 }
 
 function renderMeme() {
@@ -112,13 +111,14 @@ function onMouseMove(ev) {
         const minX = parseFloat(elDraw.offsetWidth / 2)
         const maxY = parseFloat(elDraw.offsetHeight)
         const newPos = { x: gPos.x + gMoveDif.x, y: gPos.y + gMoveDif.y }
+        const ratio = getRatio()
         if (isInRange(minX, gCanvas.width - minX, newPos.x)) {
             container.style.left = (newPos.x) + 'px'
-            drawContainer.regX = newPos.x
+            drawContainer.regX = newPos.x / ratio
         }
         if (isInRange(0, gCanvas.height - maxY, newPos.y)) {
             container.style.top = (newPos.y) + 'px'
-            drawContainer.regY = newPos.y
+            drawContainer.regY = newPos.y / ratio
         }
     }
 }
@@ -152,7 +152,7 @@ function updateCaption(settings) {
 function updateForm(elCapt) {
     document.getElementById('innerText').value = elCapt.innerText
     document.getElementById('font-family').value = elCapt.style['font-family']
-    document.getElementById('font-size').value = (elCapt.style['font-size'].replace('px', '') / getRatio())
+    document.getElementById('font-size').value = parseInt((elCapt.style['font-size'].replace('px', '') / getRatio()) + 0.1)
     document.getElementById('color').value = rgbToHex(elCapt.style.color)
     document.getElementById('-webkit-text-stroke-color').value = rgbToHex(elCapt.style['-webkit-text-stroke-color'])
 }
@@ -165,18 +165,59 @@ function onResize() {
     renderMeme()
 }
 
-function loadLocalImg(path) {
-    const img = new Image()
-    img.src = path
-    img.onload = () => {
-        onImageReady(img)
+function createGallery() {
+    const elGallery = document.querySelector('.image-gallery')
+    for (let i = 1; i <= 27; i++) {
+        elGallery.insertAdjacentHTML('beforeend', createImageHTML(i))
+        const newElImg = document.getElementById(`image${i}`)
+        loadLocalImg(`images/${i}.jpg`, newElImg)
     }
 }
 
-function onImageReady(img) {
-    createMeme(img)
+function onClickHome() {
+    onResetMeme()
+    document.querySelector('.main-gallery').classList.remove('hide')
+    document.querySelector('.editor').classList.add('hide')
+    window.removeEventListener('resize', onResize)
+    window.removeEventListener('mouseup', onMouseUp)
+}
+
+function onResetMeme() {
+    const draws = getDraws()
+    for (const draw of draws) {
+        draw.element.remove()
+    }
+    document.querySelector('.settings-container').reset()
+    gCount = 0
+    resetMeme()
+}
+
+function onSelectImage(imgId) {
+    createMeme(gImages[imgId])
+    document.querySelector('.main-gallery').classList.add('hide')
+    document.querySelector('.editor').classList.remove('hide')
+    window.addEventListener('resize', onResize)
+    window.addEventListener('mouseup', onMouseUp)
     onResize()
-    onAddDraw('caption')
+}
+
+function createImageHTML(id) {
+    return `<li class="image-container hide"
+            id="image${id}" onclick="onSelectImage(this.id)"></li>`
+}
+
+function loadLocalImg(path, element) {
+    const img = new Image()
+    img.src = path
+    img.onload = () => {
+        element.style['background-image'] = `url(${path})`
+        onImageReady(img, element)
+    }
+}
+
+function onImageReady(img, element) {
+    element.classList.remove('hide')
+    gImages[element.id] = img
 }
 
 function rgbToHex(strRGB) {
@@ -189,6 +230,10 @@ function numToHex(num) {
     return hex.length === 1 ? '0' + hex : hex
 }
 
+function isInRange(min, max, num) {
+    return num >= min && num <= max
+}
+
 function _getCurrentDraw() {
     const currId = getCurrContainer().id
     return document.getElementById(`canvas-text${currId}`)
@@ -196,8 +241,4 @@ function _getCurrentDraw() {
 
 function _getDrawById(id) {
     return document.getElementById(`canvas-text${id}`)
-}
-
-function isInRange(min, max, num) {
-    return num >= min && num <= max
 }

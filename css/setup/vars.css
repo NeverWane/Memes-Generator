@@ -7,9 +7,11 @@
     --side-gap-max: 5fr; */
 
     /* PALLETTE */
+    --clr-bg: rgb(40, 70, 33);
     --clr-header: rgb(32, 44, 44);
     --clr-logo: rgb(0, 195, 255);
     --clr-link: rgb(197, 245, 245);
     --clr-link-hover: rgb(9, 70, 238);
     --clr-nav-border: rgb(20, 20, 20);
+    --gallery-img-size: 150px;
 }
