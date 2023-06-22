@@ -42,10 +42,9 @@ function drawMeme(meme) {
     const ratio = getRatio()
     if (ratio < 1) {
         for (const draw of draws) {
-            draw.element.style.left = draw.regX * ratio
-            draw.element.style.top = draw.regY * ratio
+            draw.element.style.left = draw.regX * ratio + 'px'
+            draw.element.style.top = draw.regY * ratio + 'px'
             _getDrawById(draw.id).style['font-size'] = draw.fontSize * ratio + 'px'
-            console.log(draw.fontSize * ratio + 'px')
         }
     }
 }
@@ -107,16 +106,19 @@ function onMouseMove(ev) {
     gPos.x = ev.x
     gPos.y = ev.y
     if (gMouseDown) {
-        const container = getCurrContainer().element
+        const drawContainer = getCurrContainer()
+        const container = drawContainer.element
         const elDraw = _getCurrentDraw()
         const minX = parseFloat(elDraw.offsetWidth / 2)
         const maxY = parseFloat(elDraw.offsetHeight)
         const newPos = { x: gPos.x + gMoveDif.x, y: gPos.y + gMoveDif.y }
         if (isInRange(minX, gCanvas.width - minX, newPos.x)) {
             container.style.left = (newPos.x) + 'px'
+            drawContainer.regX = newPos.x
         }
         if (isInRange(0, gCanvas.height - maxY, newPos.y)) {
             container.style.top = (newPos.y) + 'px'
+            drawContainer.regY = newPos.y
         }
     }
 }
