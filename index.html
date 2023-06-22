@@ -10,7 +10,7 @@
 </head>
 
 <body class="main-layout" onload="onInit()">
-    <header class="main-header full main-layout">
+    <header class="main-header">
         <nav class="navbar">
             <ul class="nav-items flex align-center space-between">
                 <li class="nav-item logo nav-logo flex align-center" href="#">memegen</li>
@@ -21,12 +21,8 @@
             </ul>
         </nav>
     </header>
-    <main class="main-content flex align-center">
-        <section class="canvas-container">
-            <canvas id="canvas" class="canvas">
-            </canvas>
-        </section>
-        <form class="settings-container" oninput="onSetSettings(this)">
+    <main class="main-content flex align-center flex-column">
+        <form class="settings-container flex align-center" oninput="onSetSettings(this)">
             <label for="innerText"><button type="button" class="btn-submit"
                     onclick="onAddDraw('caption')">Add</button></label>
             <input type="text" placeholder="Enter Caption" name="innerText" id="innerText" value="Enter Caption"></input>
@@ -50,6 +46,10 @@
             <input id="color" type="color" value="#ffffff" name="color">
             <input id="-webkit-text-stroke-color" type="color" value="#000000" name="-webkit-text-stroke-color">
         </form>
+        <section class="canvas-container flex">
+            <canvas id="canvas" class="canvas">
+            </canvas>
+        </section>
     </main>
 
     <script src="js/service/storage.service.js"></script>

@@ -1,5 +1,10 @@
 .canvas-container {
     position: relative;
+    align-items: start;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding-block-start: 5px;
 }
 
 .caption-container {
@@ -40,6 +45,8 @@
 .canvas {
     display: block;
     position: relative;
+    flex-grow: 0;
+    flex-shrink: 0;
     touch-action: none;
     background-color: beige;
 }

@@ -3,7 +3,7 @@
 let gMeme = null
 let gDraws = []
 let gCurrContainer = null
-let gCurrDraw = null
+let gRatio = 1
 
 function createMeme(img) {
     gMeme = {
@@ -23,6 +23,35 @@ function addDraw(element, id, drawFunc) {
     gCurrContainer = newContainer
 }
 
+function getDraws() {
+    return gDraws
+}
+
 function getCurrContainer() {
     return gCurrContainer
+}
+
+function setCurrContainer(elText) {
+    if (!elText) return
+    const id = parseInt(elText.id.replace('canvas-text', ''))
+    gCurrContainer = gDraws[gDraws.findIndex(draw => {
+        return draw.id === id
+    })]
+}
+
+function updateRatio(maxW, maxH) {
+    const img = gMeme.img
+    let newRatio = 1
+    if (img.width > (0.8 * maxW)) {
+        newRatio = (0.8 * maxW) / img.width
+    }
+    if ((img.height * newRatio) > (0.8 * maxH)) {
+        newRatio = (0.8 * maxH) / img.height
+    }
+    gRatio = newRatio
+    return gRatio
+}
+
+function getRatio() {
+    return gRatio
 }

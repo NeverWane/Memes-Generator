@@ -1,17 +1,9 @@
 .main-layout {
-    display: grid;
-    grid-template-columns: var(--side-gap) 1fr var(--side-gap);
-}
-
-.main-layout > *:not(.full) {
-    grid-column: 2;
-}
-
-.main-layout > *.full {
-    grid-column: 1 / -1;
+    position: relative;
 }
 
 .main-header {
     position: sticky;
-    grid-auto-flow: column;
+    top: 0;
+    z-index: 10;
 }
