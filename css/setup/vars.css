@@ -13,6 +13,9 @@
     --clr-nav-border: rgb(20, 20, 20);
     --clr-add-bg: rgb(39, 182, 58);
     --clr-remove-bg: rgb(245, 42, 15);
+    --clr-remove-hover: rgb(241, 245, 3);
+    --clr-download-bg: rgb(4, 110, 87);
+    --clr-save-bg: rgb(4, 100, 104);
     --clr-add-txt: rgb(233, 238, 234);
     --gallery-img-size: 150px;
 }

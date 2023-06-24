@@ -15,7 +15,8 @@
             <ul class="nav-items flex align-center space-between">
                 <li class="nav-item logo nav-logo flex align-center" onclick="onClickHome()">memegen</li>
                 <ul class="nav-item nav-links flex align-center">
-                    <li class="nav-link nav-gallery flex align-center" onclick="onClickHome()">gallery</li>
+                    <li class="nav-link flex align-center" onclick="onClickHome()">gallery</li>
+                    <li class="nav-link flex align-center" onclick="onClickSaved()">saved</li>
                     <li class="nav-link nav-new flex align-center">new</li>
                 </ul>
             </ul>
@@ -23,7 +24,10 @@
     </header>
     <main class="main-content flex align-center flex-column">
         <section class="main-gallery flex">
-            <ul class="image-gallery flex align-center space-around"></ul>
+            <ul class="image-gallery local-image-gallery flex align-center space-around"></ul>
+        </section>
+        <section class="saved-gallery flex">
+            <ul class="image-gallery saved-image-gallery flex align-center space-around"></ul>
         </section>
         <section class="editor flex align-center flex-column hide">
             <form class="settings-container" oninput="onSetSettings(this)">
@@ -53,7 +57,8 @@
                     value="Enter Caption"></input>
                 <button type="button" class="btn btn-submit" onclick="onAddDraw('caption')">Add</button>
                 <button type="button" class="btn btn-remove" onclick="onRemoveDraw()">Remove</button>
-                <button type="button" class="btn" onclick="onDownload()">Download</button>
+                <button type="button" class="btn btn-download" onclick="onDownload()">Download</button>
+                <button type="button" class="btn btn-save" onclick="onSaveMeme()">Save</button>
                 <a download="canvas.jpeg" class="hide" id="download" href="#"></a>
             </form>
             <section class="canvas-container flex">

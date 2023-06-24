@@ -8,36 +8,29 @@
 }
 
 .settings-container {
-    display: grid;
-    row-gap: 2px;
-    column-gap: 2px;
-    grid-template-areas: 
-    "style size  fill  stroke"
-    "text  text  add   remove";
     padding: 0.5em;
-    flex-wrap: wrap;
+    display: grid;
+    column-gap: 2px;
+    row-gap: 5px;
+    grid-template-columns: repeat(4, auto);
+    grid-template-rows: repeat(3, auto);
 }
 
 .settings-text {
-    grid-area: 'text';
-}
-
-.settings-size {
-    grid-area: 'size';
-}
-
-.settings-font {
-    grid-area: 'style';
+    grid-column: 1 / 2;
 }
 
 .settings-fill {
-    width: 2em;
-    grid-area: 'fill';
+    width: 2.3em;
+    grid-column: 3 / 4;
+    grid-row: 1 / 2;
 }
 
 .settings-stroke {
-    width: 2em;
-    grid-area: 'stroke';
+    width: 2.3em;
+    grid-column: 3 / 4;
+    grid-row: 1 / 2;
+    justify-self:end;
 }
 
 .btn-submit {
@@ -55,6 +48,27 @@
     color: var(--clr-add-txt);
     border-radius: 2em;
     transition: 0.4s;
+    justify-self: left;
+}
+
+.btn-remove:hover {
+    color: var(--clr-remove-hover);
+}
+
+.btn-download {
+    grid-row: 3 / 4;
+    justify-self: center;
+    border-radius: 2em;
+    background-color: var(--clr-download-bg);
+    color: var(--clr-add-txt);
+}
+
+.btn-save {
+    border-radius: 2em;
+    grid-row: 3 / 4;
+    justify-self: center;
+    background-color: var(--clr-save-bg);
+    color: var(--clr-add-txt);
 }
 
 .btn-submit:hover {

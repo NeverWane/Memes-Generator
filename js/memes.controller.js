@@ -36,6 +36,7 @@ function onInit() {
     onmousemove = onMouseMove
     window.addEventListener('keydown', onKeyDown)
     createGallery()
+    createSavedGallery()
 }
 
 function renderMeme(ratio = getRatio(), canvas = gCanvas) {
@@ -62,6 +63,13 @@ function drawImage(img, x, y, ratio = getRatio(), ctx = gCtx) {
         y -= ratio * (img.height / 2)
         ctx.drawImage(img, x, y, (ratio * img.width), (ratio * img.height))
     }
+}
+
+function onSaveMeme() {
+    onDrawMeme()
+    saveMeme(gCanvasCopy.toDataURL('image/jpeg'))
+    alert('Saved!')
+    createSavedGallery()
 }
 
 function onDownload(desiredRatio = getRatio()) {
@@ -106,10 +114,10 @@ function onRemoveDraw() {
 function onAddCaption(ratio = getRatio()) {
     const captionContainer =
         `<section id="caption-container${gCount}" class="caption-container flex flex-column align-center">
-    <div class="move" id="move${gCount}" onmousedown="onMouseDown(this)" style="background-image: url('images/move.png');"></div>
-    <div id="canvas-text${gCount}" role="textbox" contenteditable="true" class="canvas-text"
-        oninput="updateForm(this)" onclick="updateForm(this); setCurrContainer(this)">Enter Caption</div>
-    </section>`
+            <div class="move" id="move${gCount}" onmousedown="onMouseDown(this)" style="background-image: url('images/move.png');"></div>
+            <div id="canvas-text${gCount}" role="textbox" contenteditable="true" class="canvas-text"
+            oninput="updateForm(this)" onclick="updateForm(this); setCurrContainer(this)">Enter Caption</div>
+        </section>`
     document.querySelector('.canvas-container').insertAdjacentHTML('beforeend', captionContainer)
     addDraw(document.getElementById(`caption-container${gCount}`), gCount, 'caption')
     const elContainer = getCurrContainer()
@@ -121,7 +129,7 @@ function onAddCaption(ratio = getRatio()) {
 
 function drawCaption(container) {
     const elCapt = _getDrawById(container.id)
-    _setContext(elCapt, desiredRatio)
+    _setContext(elCapt)
     const lines = _getCaptionLines(elCapt)
     const lineHeight = _getLineHeight(elCapt)
     const x = container.element.offsetLeft
@@ -242,7 +250,7 @@ function onResize(ev, ratio = updateRatio(window.innerWidth, window.innerHeight 
 }
 
 function createGallery() {
-    const elGallery = document.querySelector('.image-gallery')
+    const elGallery = document.querySelector('.local-image-gallery')
     for (let i = 1; i <= 27; i++) {
         elGallery.insertAdjacentHTML('beforeend', createImageHTML(i))
         const newElImg = document.getElementById(`image${i}`)
@@ -250,9 +258,32 @@ function createGallery() {
     }
 }
 
+function createSavedGallery() {
+    loadSavedMemes()
+    const savedMemes = getSavedMemes()
+    if (!savedMemes) return
+    const elGallery = document.querySelector('.saved-image-gallery')
+    elGallery.innerHTML = ''
+    for (const id in savedMemes) {
+        elGallery.insertAdjacentHTML('beforeend', createSavedImgHTML(id))
+        const newElImg = document.getElementById(id)
+        loadLocalImg(savedMemes[id].drawnSrc, newElImg)
+    }
+}
+
 function onClickHome() {
     onResetMeme()
     document.querySelector('.main-gallery').classList.remove('hide')
+    document.querySelector('.saved-gallery').classList.add('hide')
+    document.querySelector('.editor').classList.add('hide')
+    window.removeEventListener('resize', onResize)
+    window.removeEventListener('mouseup', onMouseUp)
+}
+
+function onClickSaved() {
+    onResetMeme()
+    document.querySelector('.saved-gallery').classList.remove('hide')
+    document.querySelector('.main-gallery').classList.add('hide')
     document.querySelector('.editor').classList.add('hide')
     window.removeEventListener('resize', onResize)
     window.removeEventListener('mouseup', onMouseUp)
@@ -260,8 +291,11 @@ function onClickHome() {
 
 function onResetMeme() {
     const draws = getDraws()
-    for (const draw of draws) {
-        draw.element.remove()
+    if (draws && draws.length) {
+        for (let draw of draws) {
+            draw.element.remove()
+            draw = null
+        }
     }
     document.querySelector('.settings-container').reset()
     gCount = 0
@@ -271,15 +305,49 @@ function onResetMeme() {
 function onSelectImage(imgId) {
     createMeme(gImages[imgId])
     document.querySelector('.main-gallery').classList.add('hide')
+    document.querySelector('.saved-gallery').classList.add('hide')
     document.querySelector('.editor').classList.remove('hide')
     window.addEventListener('resize', onResize)
     window.addEventListener('mouseup', onMouseUp)
     onResize()
 }
 
+function onSelectSavedImg(savedId) {
+    const memeContainer = getMemeById(savedId)
+    if (!memeContainer) return
+    onResetMeme()
+    const img = new Image()
+    img.onload = () => {
+        createMeme(img)
+        for (const draw of memeContainer.draws) {
+            document.querySelector('.canvas-container').insertAdjacentHTML('beforeend', draw.html)
+            addDraw(document.getElementById(`caption-container${draw.id}`), draw.id, draw.type)
+            if (draw.id >= gCount) {
+                gCount = draw.id + 1
+            }
+            const container = getCurrContainer()
+            container.regX = draw.regX
+            container.regY = draw.regY
+            container.fontSize = draw.fontSize
+        }
+        document.querySelector('.main-gallery').classList.add('hide')
+        document.querySelector('.saved-gallery').classList.add('hide')
+        document.querySelector('.editor').classList.remove('hide')
+        window.addEventListener('resize', onResize)
+        window.addEventListener('mouseup', onMouseUp)
+        onResize()
+    }
+    img.src = memeContainer.origSrc
+}
+
 function createImageHTML(id) {
     return `<li class="image-container hide"
             id="image${id}" onclick="onSelectImage(this.id)"></li>`
+}
+
+function createSavedImgHTML(id) {
+    return `<li class="image-container hide"
+            id="${id}" onclick="onSelectSavedImg(this.id)"></li>`
 }
 
 function loadLocalImg(path, element, readyFunc = onImageReady) {
