@@ -52,6 +52,11 @@ function saveMeme(drawnSrc) {
     saveToLocalStorage(SAVED_MEMES, gSavedMemes)
 }
 
+function removeMeme(id) {
+    delete gSavedMemes[id]
+    saveToLocalStorage(SAVED_MEMES, gSavedMemes)
+}
+
 function addDraw(element, id, type) {
     const newContainer = {element, id, type}
     gDraws.push(newContainer)

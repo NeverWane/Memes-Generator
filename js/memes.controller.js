@@ -72,6 +72,13 @@ function onSaveMeme() {
     createSavedGallery()
 }
 
+function onRemoveMeme(ev, id) {
+    ev.stopPropagation()
+    id = id.replace('X', '')
+    removeMeme(id)
+    createSavedGallery()
+}
+
 function onDownload(desiredRatio = getRatio()) {
     onDrawMeme()
     const elDownload = document.getElementById('download')
@@ -347,7 +354,7 @@ function createImageHTML(id) {
 
 function createSavedImgHTML(id) {
     return `<li class="image-container hide"
-            id="${id}" onclick="onSelectSavedImg(this.id)"></li>`
+            id="${id}" onclick="onSelectSavedImg(this.id)"><button id="X${id}" class="image-remove" onclick="onRemoveMeme(event, this.id)">X</button></li>`
 }
 
 function loadLocalImg(path, element, readyFunc = onImageReady) {
