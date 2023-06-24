@@ -6,6 +6,7 @@ let gCanvasCopy
 let gCtxCopy
 let gMouseDown = false
 let gCount = 0
+let gPrevImg = null
 const gImages = {}
 
 const gPos = {
@@ -79,18 +80,39 @@ function onRemoveMeme(ev, id) {
     createSavedGallery()
 }
 
-function onDownload(desiredRatio = getRatio()) {
+function onShowPreview() {
     onDrawMeme()
-    const elDownload = document.getElementById('download')
-    const ratio = desiredRatio / getRatio()
+    const ratio = getRatio()
     let img = new Image()
     img.onload = () => {
-        gCanvasCopy.width = gCanvasCopy.width * ratio
-        gCanvasCopy.height = gCanvasCopy.height * ratio
-        drawImage(img, gCanvasCopy.width / 2, gCanvasCopy.height / 2, ratio, gCtxCopy)
+        gPrevImg = img
+        document.getElementById('resize').value = ratio
+        document.querySelector('.modal-download').classList.remove('hide')
+        document.querySelector('.editor').classList.add('hide')
+
+    }
+    img.src = gCanvasCopy.toDataURL('image/jpeg')
+}
+
+function closePreview() {
+    document.querySelector('.modal-download').classList.add('hide')
+    document.querySelector('.editor').classList.remove('hide')
+}
+
+function updatePreview(ratio) {
+    gCanvasCopy.width = gPrevImg.width * ratio
+    gCanvasCopy.height = gPrevImg.height * ratio
+    drawImage(gPrevImg, gCanvasCopy.width / 2, gCanvasCopy.height / 2, ratio, gCtxCopy)
+}
+
+function onDownload() {
+    const elDownload = document.getElementById('download')
+    let img = new Image()
+    img.onload = () => {
         const url = gCanvasCopy.toDataURL('image/jpeg')
         elDownload.href = url
         elDownload.click()
+        closePreview()
     }
     img.src = gCanvasCopy.toDataURL('image/jpeg')
 }
@@ -280,7 +302,9 @@ function createSavedGallery() {
 
 function onClickHome() {
     onResetMeme()
+    
     document.querySelector('.main-gallery').classList.remove('hide')
+    document.querySelector('.modal-download').classList.add('hide')
     document.querySelector('.saved-gallery').classList.add('hide')
     document.querySelector('.editor').classList.add('hide')
     window.removeEventListener('resize', onResize)
@@ -290,6 +314,7 @@ function onClickHome() {
 function onClickSaved() {
     onResetMeme()
     document.querySelector('.saved-gallery').classList.remove('hide')
+    document.querySelector('.modal-download').classList.add('hide')
     document.querySelector('.main-gallery').classList.add('hide')
     document.querySelector('.editor').classList.add('hide')
     window.removeEventListener('resize', onResize)

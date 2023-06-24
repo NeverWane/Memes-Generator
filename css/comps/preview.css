@@ -1,0 +1,22 @@
+.modal-download {
+    justify-content: baseline;
+    padding: 1em;
+    gap: 0.5em;
+    top: 0;
+    left: 0;
+    width: 80%;
+    height: 80%;
+    z-index: 50;
+}
+
+.btn-cancel {
+    background-color: var(--clr-cancel-bg);
+    color: var(--clr-add-txt);
+    border-radius: 2em;
+    margin-inline: 1em;
+}
+
+.label-resize {
+    color: var(--clr-add-txt);
+    align-self: center;
+}

@@ -29,6 +29,15 @@
         <section class="saved-gallery flex">
             <ul class="image-gallery saved-image-gallery flex align-center space-around"></ul>
         </section>
+        <section class="modal-download flex align-center flex-column hide">
+            <section class="flex align-center">
+                <button type="button" class="btn btn-download" onclick="onDownload()">Download</button>
+                <button type="button" class="btn btn-cancel" onclick="closePreview()">Cancel</button>
+            </section>
+            <label class="label-resize" for="resize">Adjust Aspect Ratio:<input id="resize" class="resizer" name="resize" type="range" min="0" max="3" step="0.05" value="1" oninput="updatePreview(this.value)"></label>
+            <a download="canvas.jpeg" class="hide" id="download" href="#"></a>
+            <canvas id="canvas-copy" class="canvas-copy"></canvas>
+        </section>
         <section class="editor flex align-center flex-column hide">
             <form class="settings-container" oninput="onSetSettings(this)">
                 <select class="settings-font" id="font-family" name="font-family">
@@ -57,15 +66,13 @@
                     value="Enter Caption"></input>
                 <button type="button" class="btn btn-submit" onclick="onAddDraw('caption')">Add</button>
                 <button type="button" class="btn btn-remove" onclick="onRemoveDraw()">Remove</button>
-                <button type="button" class="btn btn-download" onclick="onDownload()">Download</button>
+                <button type="button" class="btn btn-download" onclick="onShowPreview()">Download</button>
                 <button type="button" class="btn btn-save" onclick="onSaveMeme()">Save</button>
-                <a download="canvas.jpeg" class="hide" id="download" href="#"></a>
             </form>
             <section class="canvas-container flex">
                 <canvas id="canvas" class="canvas">
                 </canvas>
             </section>
-            <canvas id="canvas-copy" class="hide"></canvas>
         </section>
     </main>
 
