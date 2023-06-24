@@ -26,12 +26,13 @@
             <ul class="image-gallery flex align-center space-around"></ul>
         </section>
         <section class="editor flex align-center flex-column hide">
-            <form class="settings-container flex align-center" oninput="onSetSettings(this)">
-                <label for="innerText"><button type="button" class="btn-submit"
-                        onclick="onAddDraw('caption')">Add</button></label>
-                <input type="text" placeholder="Enter Caption" name="innerText" id="innerText"
-                    value="Enter Caption"></input>
-                <select id="font-size" name="font-size">
+            <form class="settings-container" oninput="onSetSettings(this)">
+                <select class="settings-font" id="font-family" name="font-family">
+                    <option selected="selected">Impact</option>
+                    <option>Arial</option>
+                    <option>Times</option>
+                </select>
+                <select class="settings-size" id="font-size" name="font-size">
                     <option>12</option>
                     <option>16</option>
                     <option>20</option>
@@ -45,18 +46,21 @@
                     <option>64</option>
                     <option>72</option>
                 </select>
-                <select id="font-family" name="font-family">
-                    <option selected="selected">Impact</option>
-                    <option>Arial</option>
-                    <option>Times</option>
-                </select>
-                <input id="color" type="color" value="#ffffff" name="color">
-                <input id="-webkit-text-stroke-color" type="color" value="#000000" name="-webkit-text-stroke-color">
+                <input class="settings-fill" id="color" type="color" value="#ffffff" name="color" title="Text Color">
+                <input class="settings-stroke" id="-webkit-text-stroke-color" type="color" value="#000000"
+                    name="-webkit-text-stroke-color" title="Outline Color">
+                <input class="settings-text" type="text" placeholder="Enter Caption" name="innerText" id="innerText"
+                    value="Enter Caption"></input>
+                <button type="button" class="btn btn-submit" onclick="onAddDraw('caption')">Add</button>
+                <button type="button" class="btn btn-remove" onclick="onRemoveDraw()">Remove</button>
+                <button type="button" class="btn" onclick="onDownload()">Download</button>
+                <a download="canvas.jpeg" class="hide" id="download" href="#"></a>
             </form>
             <section class="canvas-container flex">
                 <canvas id="canvas" class="canvas">
                 </canvas>
             </section>
+            <canvas id="canvas-copy" class="hide"></canvas>
         </section>
     </main>
 

@@ -1,17 +1,18 @@
 :root {
-    --header-height: 60px;
-    --side-gap: 60px;
-    /* --main-width-min: 700px;
-    --main-width-max: 90fr;
-    --side-gap-min: 20px;
-    --side-gap-max: 5fr; */
+    --header-height: 10%;
+    --content-height: 90%;
 
     /* PALLETTE */
-    --clr-bg: rgb(40, 70, 33);
-    --clr-header: rgb(32, 44, 44);
-    --clr-logo: rgb(0, 195, 255);
-    --clr-link: rgb(197, 245, 245);
-    --clr-link-hover: rgb(9, 70, 238);
+    --clr-bg: rgb(38, 46, 46);
+    --clr-header: rgb(24, 31, 31);
+    --clr-editor: rgb(56, 71, 71);
+    --clr-editor-border: rgb(114, 113, 113);
+    --clr-logo: rgb(0, 155, 255);
+    --clr-link: rgb(227, 227, 231);
+    --clr-link-hover: rgb(38, 153, 161);
     --clr-nav-border: rgb(20, 20, 20);
+    --clr-add-bg: rgb(39, 182, 58);
+    --clr-remove-bg: rgb(245, 42, 15);
+    --clr-add-txt: rgb(233, 238, 234);
     --gallery-img-size: 150px;
 }

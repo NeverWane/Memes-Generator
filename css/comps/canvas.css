@@ -2,8 +2,6 @@
     position: relative;
     align-items: start;
     justify-content: center;
-    /* width: 100%;
-    height: 100%; */
     padding-block-start: 5px;
 }
 
@@ -30,14 +28,14 @@
 }
 
 .canvas-text {
+    position: absolute;
     text-align: center;
-    text-anchor: middle;
-    overflow: auto;
     cursor: default;
     border: none;
 }
 
 .canvas-text:focus {
+    overflow: auto;
     resize: horizontal;
     border: 2px solid var(--clr-nav-border);
 }
@@ -48,5 +46,5 @@
     flex-grow: 0;
     flex-shrink: 0;
     touch-action: none;
-    background-color: beige;
+    background-color: transparent;
 }

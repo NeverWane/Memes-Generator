@@ -2,6 +2,8 @@
 
 let gCanvas
 let gCtx
+let gCanvasCopy
+let gCtxCopy
 let gMouseDown = false
 let gCount = 0
 const gImages = {}
@@ -16,8 +18,12 @@ const gMoveDif = {
     y: 0,
 }
 
-const drawMap = {
+const addMap = {
     caption: onAddCaption,
+}
+
+const drawMap = {
+    caption: drawCaption,
 }
 
 const gCaptionStyles = ['font-family', 'font-size', 'color', '-webkit-text-stroke-color']
@@ -25,44 +31,79 @@ const gCaptionStyles = ['font-family', 'font-size', 'color', '-webkit-text-strok
 function onInit() {
     gCanvas = document.querySelector('#canvas')
     gCtx = gCanvas.getContext('2d')
+    gCanvasCopy = document.querySelector('#canvas-copy')
+    gCtxCopy = gCanvasCopy.getContext('2d')
     onmousemove = onMouseMove
+    window.addEventListener('keydown', onKeyDown)
     createGallery()
 }
 
-function renderMeme() {
+function renderMeme(ratio = getRatio(), canvas = gCanvas) {
     const meme = getMeme()
     if (!meme) return
-    drawMeme(meme)
+    drawMeme(meme, ratio, canvas)
 }
 
-function drawMeme(meme) {
-    drawImage(meme.img, gCanvas.width / 2, gCanvas.height / 2)
+function drawMeme(meme, ratio = getRatio(), canvas = gCanvas) {
+    const ctx = canvas === gCanvas ? gCtx : gCtxCopy
+    drawImage(meme.img, canvas.width / 2, canvas.height / 2, ratio, ctx)
+    if (ctx !== gCtx) return
     const draws = getDraws()
-    const ratio = getRatio()
-    if (ratio < 1) {
-        for (const draw of draws) {
-            draw.element.style.left = draw.regX * ratio + 'px'
-            draw.element.style.top = draw.regY * ratio + 'px'
-            _getDrawById(draw.id).style['font-size'] = draw.fontSize * ratio + 'px'
-        }
+    for (const draw of draws) {
+        draw.element.style.left = draw.regX * ratio + 'px'
+        draw.element.style.top = draw.regY * ratio + 'px'
+        _getDrawById(draw.id).style['font-size'] = draw.fontSize * ratio + 'px'
     }
 }
 
-function drawImage(img, x, y) {
+function drawImage(img, x, y, ratio = getRatio(), ctx = gCtx) {
     if (img) {
-        const ratio = getRatio()
         x -= ratio * (img.width / 2)
         y -= ratio * (img.height / 2)
-        gCtx.drawImage(img, x, y, (ratio * img.width), (ratio * img.height))
+        ctx.drawImage(img, x, y, (ratio * img.width), (ratio * img.height))
+    }
+}
+
+function onDownload(desiredRatio = getRatio()) {
+    onDrawMeme()
+    const elDownload = document.getElementById('download')
+    const ratio = desiredRatio / getRatio()
+    let img = new Image()
+    img.onload = () => {
+        gCanvasCopy.width = gCanvasCopy.width * ratio
+        gCanvasCopy.height = gCanvasCopy.height * ratio
+        drawImage(img, gCanvasCopy.width / 2, gCanvasCopy.height / 2, ratio, gCtxCopy)
+        const url = gCanvasCopy.toDataURL('image/jpeg')
+        elDownload.href = url
+        elDownload.click()
+    }
+    img.src = gCanvasCopy.toDataURL('image/jpeg')
+}
+
+function onDrawMeme() {
+    const curRatio = getRatio()
+    onResize(null, curRatio, gCanvasCopy)
+    for (const draw of getDraws()) {
+        if (!draw || !draw.type) continue
+        drawMap[draw.type](draw)
     }
 }
 
 function onAddDraw(type) {
-    drawMap[type]()
+    addMap[type]()
     renderMeme()
 }
 
-function onAddCaption() {
+function onRemoveDraw() {
+    const container = getCurrContainer()
+    if (!container) return
+    let elContainer = container.element
+    removeCurrContainer()
+    elContainer.remove()
+    elContainer = null
+}
+
+function onAddCaption(ratio = getRatio()) {
     const captionContainer =
         `<section id="caption-container${gCount}" class="caption-container flex flex-column align-center">
     <div class="move" id="move${gCount}" onmousedown="onMouseDown(this)" style="background-image: url('images/move.png');"></div>
@@ -70,24 +111,61 @@ function onAddCaption() {
         oninput="updateForm(this)" onclick="updateForm(this); setCurrContainer(this)">Enter Caption</div>
     </section>`
     document.querySelector('.canvas-container').insertAdjacentHTML('beforeend', captionContainer)
-    addDraw(document.getElementById(`caption-container${gCount}`), gCount, drawCaption)
+    addDraw(document.getElementById(`caption-container${gCount}`), gCount, 'caption')
     const elContainer = getCurrContainer()
-    const ratio = getRatio()
     elContainer.regX = (elContainer.offsetLeft / ratio)
     elContainer.regY = (elContainer.offsetTop / ratio)
     gCount++
     onSetSettings()
 }
 
-function drawCaption(capt) {
-    gCtx.lineWidth = 2
-    gCtx.strokeStyle = capt.stroke
-    gCtx.fillStyle = capt.fill
-    gCtx.font = `${capt.fontSize}px ${capt.font}`
-    gCtx.textAlign = 'center'
-    gCtx.textBaseline = 'middle'
-    gCtx.fillText(capt.caption, capt.x + ((+capt.width) / 2), capt.y + (+capt.height) + 12.5)
-    gCtx.strokeText(capt.caption, capt.x + ((+capt.width) / 2), capt.y + (+capt.height) + 12.5)
+function drawCaption(container) {
+    const elCapt = _getDrawById(container.id)
+    _setContext(elCapt, desiredRatio)
+    const lines = _getCaptionLines(elCapt)
+    const lineHeight = _getLineHeight(elCapt)
+    const x = container.element.offsetLeft
+    let y = container.element.offsetTop
+    for (let line of lines) {
+        gCtxCopy.fillText(line, x, y)
+        gCtxCopy.strokeText(line, x, y)
+        y += lineHeight
+    }
+}
+
+function _getCaptionLines(elCapt) {
+    const maxW = elCapt.offsetWidth + 0.5
+    const words = elCapt.innerText.split(/(\s)/).filter(str => str)
+    let lines = []
+    let curLine = ''
+    for (const word of words) {
+        if (curLine && gCtxCopy.measureText(curLine + word).width > maxW) {
+            lines.push(curLine)
+            curLine = ''
+        }
+        for (let i = 0; i < word.length; i++) {
+            if (gCtxCopy.measureText(curLine + word[i]).width > maxW) {
+                lines.push(curLine)
+                curLine = ''
+            }
+            curLine += word[i]
+        }
+    }
+    if (curLine) {
+        lines.push(curLine)
+    }
+    lines = lines.filter(line => line !== ' ')
+    return lines
+}
+
+function _setContext(elCapt) {
+    const fontSize = _getElFontSize(elCapt)
+    gCtxCopy.lineWidth = 2
+    gCtxCopy.strokeStyle = elCapt.style['-webkit-text-stroke-color']
+    gCtxCopy.fillStyle = elCapt.style.color
+    gCtxCopy.font = `${fontSize}px ${elCapt.style['font-family']}`
+    gCtxCopy.textAlign = 'center'
+    gCtxCopy.textBaseline = 'top'
 }
 
 function onMouseDown() {
@@ -101,7 +179,7 @@ function onMouseUp() {
     gMouseDown = false
 }
 
-function onMouseMove(ev) {
+function onMouseMove(ev, ratio = getRatio()) {
     gPos.x = ev.x
     gPos.y = ev.y
     if (gMouseDown) {
@@ -111,7 +189,6 @@ function onMouseMove(ev) {
         const minX = parseFloat(elDraw.offsetWidth / 2)
         const maxY = parseFloat(elDraw.offsetHeight)
         const newPos = { x: gPos.x + gMoveDif.x, y: gPos.y + gMoveDif.y }
-        const ratio = getRatio()
         if (isInRange(minX, gCanvas.width - minX, newPos.x)) {
             container.style.left = (newPos.x) + 'px'
             drawContainer.regX = newPos.x / ratio
@@ -132,10 +209,10 @@ function onSetSettings(form) {
     updateCaption(Object.fromEntries(settings))
 }
 
-function updateCaption(settings) {
+function updateCaption(settings, ratio = getRatio()) {
     const container = getCurrContainer()
     container.fontSize = settings['font-size']
-    settings['font-size'] *= getRatio()
+    settings['font-size'] *= ratio
     settings['font-size'] += 'px'
     const caption = _getCurrentDraw()
     if (caption) {
@@ -149,20 +226,19 @@ function updateCaption(settings) {
     }
 }
 
-function updateForm(elCapt) {
+function updateForm(elCapt, ratio = getRatio()) {
     document.getElementById('innerText').value = elCapt.innerText
     document.getElementById('font-family').value = elCapt.style['font-family']
-    document.getElementById('font-size').value = parseInt((elCapt.style['font-size'].replace('px', '') / getRatio()) + 0.1)
+    document.getElementById('font-size').value = parseInt((elCapt.style['font-size'].replace('px', '') / ratio) + 0.1)
     document.getElementById('color').value = rgbToHex(elCapt.style.color)
     document.getElementById('-webkit-text-stroke-color').value = rgbToHex(elCapt.style['-webkit-text-stroke-color'])
 }
 
-function onResize() {
+function onResize(ev, ratio = updateRatio(window.innerWidth, window.innerHeight - 100), canvas = gCanvas) {
     const img = getMeme().img
-    const ratio = updateRatio(window.innerWidth, window.innerHeight - 100)
-    gCanvas.width = ratio * img.width
-    gCanvas.height = ratio * img.height
-    renderMeme()
+    canvas.width = ratio * img.width
+    canvas.height = ratio * img.height
+    renderMeme(ratio, canvas)
 }
 
 function createGallery() {
@@ -206,18 +282,26 @@ function createImageHTML(id) {
             id="image${id}" onclick="onSelectImage(this.id)"></li>`
 }
 
-function loadLocalImg(path, element) {
+function loadLocalImg(path, element, readyFunc = onImageReady) {
     const img = new Image()
     img.src = path
     img.onload = () => {
-        element.style['background-image'] = `url(${path})`
-        onImageReady(img, element)
+        if (element) {
+            element.style['background-image'] = `url(${path})`
+        }
+        readyFunc(img, element)
     }
 }
 
 function onImageReady(img, element) {
     element.classList.remove('hide')
     gImages[element.id] = img
+}
+
+function onKeyDown(ev) {
+    if (ev.keyCode == 13) {
+        ev.preventDefault()
+    }
 }
 
 function rgbToHex(strRGB) {
@@ -241,4 +325,20 @@ function _getCurrentDraw() {
 
 function _getDrawById(id) {
     return document.getElementById(`canvas-text${id}`)
+}
+
+function _getLineHeight(element, desiredRatio = getRatio()) {
+    const ratio = desiredRatio / getRatio()
+    const fontSize = (_getElFontSize(element) * ratio) + 'px'
+    let temp = document.createElement(element.nodeName)
+    temp.setAttribute("style", "margin: 0px; padding: 0px; font-family: " + element.style.fontFamily + "; font-size: " + fontSize) + ';'
+    temp.innerHTML = "test"
+    temp = element.parentNode.appendChild(temp)
+    const ret = temp.clientHeight
+    temp.parentNode.removeChild(temp)
+    return ret
+}
+
+function _getElFontSize(element) {
+    return element.style.fontSize.replace('px', '')
 }

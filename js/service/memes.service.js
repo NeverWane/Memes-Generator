@@ -17,10 +17,17 @@ function getMeme() {
     return gMeme
 }
 
-function addDraw(element, id, drawFunc) {
-    const newContainer = {element, id, draw: drawFunc}
+function addDraw(element, id, type) {
+    const newContainer = {element, id, type}
     gDraws.push(newContainer)
     gCurrContainer = newContainer
+}
+
+function removeCurrContainer() {
+    gDraws = gDraws.filter(draw => {
+        return draw !== gCurrContainer
+    })
+    gCurrContainer = null
 }
 
 function getDraws() {

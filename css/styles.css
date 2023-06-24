@@ -12,6 +12,7 @@
 @import url("comps/content.css");
 @import url("comps/canvas.css");
 @import url("comps/gallery.css");
+@import url("comps/settings.css");
 
 /* MQ */
 @import url("basics/mq.css");
