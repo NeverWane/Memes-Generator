@@ -17,6 +17,7 @@
 
 .move {
     display: none;
+    background-image: url('../../images/move.png');
     width: 25px;
     height: 25px;
     cursor: move;

@@ -82,9 +82,9 @@ function getMemeById(id) {
     return gSavedMemes[id]
 }
 
-function setCurrContainer(elText) {
-    if (!elText) return
-    const id = parseInt(elText.id.replace('canvas-text', ''))
+function setCurrContainer(elChild) {
+    if (!elChild) return
+    const id = parseInt(elChild.id.replace('canvas-text', '').replace('move', ''))
     gCurrContainer = gDraws[gDraws.findIndex(draw => {
         return draw.id === id
     })]

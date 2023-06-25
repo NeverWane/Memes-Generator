@@ -148,9 +148,9 @@ function onAddCaption(ratio = getRatio()) {
     }
     const captionContainer =
         `<section id="caption-container${gCount}" class="caption-container flex flex-column align-center">
-            <div class="move" id="move${gCount}" ontouchstart="onMouseDown(this)" onmousedown="onMouseDown(this)" style="background-image: url('images/move.png');"></div>
+            <div class="move" id="move${gCount}" ontouchstart="onMouseDown(this)" onmousedown="onMouseDown(this)"></div>
             <div id="canvas-text${gCount}" role="textbox" contenteditable="true" class="canvas-text"
-            oninput="updateForm(this)" onclick="updateForm(this); setCurrContainer(this)">Enter Caption</div>
+            oninput="updateForm(this)" onmousedown="updateForm(this); setCurrContainer(this)">Enter Caption</div>
         </section>`
     document.querySelector('.canvas-container').insertAdjacentHTML('beforeend', captionContainer)
     addDraw(document.getElementById(`caption-container${gCount}`), gCount, 'caption')
@@ -210,10 +210,13 @@ function _setContext(elCapt) {
     gCtxCopy.textBaseline = 'top'
 }
 
-function onMouseDown() {
-    if (!getCurrContainer()) return
+function onMouseDown(elMove) {
+    if (!elMove) return
+    setCurrContainer(elMove)
+    const drawContainer = getCurrContainer()
+    updateForm(_getDrawById(drawContainer.id))
+    const container = drawContainer.element
     gMouseDown = true
-    const container = getCurrContainer().element
     gMoveDif.x = parseFloat(container.offsetLeft) - gPos.x
     gMoveDif.y = parseFloat(container.offsetTop) - gPos.y
 }
@@ -314,12 +317,19 @@ function createSavedGallery() {
     }
 }
 
+function onToggleMenu() {
+    document.querySelector(`.nav-links`).classList.toggle('shown')
+    document.querySelector(`.btn-toggle-menu`).classList.toggle('shown')
+}
+
 function onClickHome() {
     onResetMeme()
     document.querySelector('.main-gallery').classList.remove('hide')
     document.querySelector('.modal-download').classList.add('hide')
     document.querySelector('.saved-gallery').classList.add('hide')
     document.querySelector('.editor').classList.add('hide')
+    document.querySelector(`.nav-links`).classList.remove('shown')
+    document.querySelector(`.btn-toggle-menu`).classList.remove('shown')
     window.removeEventListener('resize', onResize)
     window.removeEventListener('mouseup', onMouseUp)
     window.removeEventListener('touchend', onMouseUp)
@@ -331,6 +341,8 @@ function onClickSaved() {
     document.querySelector('.modal-download').classList.add('hide')
     document.querySelector('.main-gallery').classList.add('hide')
     document.querySelector('.editor').classList.add('hide')
+    document.querySelector(`.nav-links`).classList.remove('shown')
+    document.querySelector(`.btn-toggle-menu`).classList.remove('shown')
     window.removeEventListener('resize', onResize)
     window.removeEventListener('mouseup', onMouseUp)
     window.removeEventListener('touchend', onMouseUp)
