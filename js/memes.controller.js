@@ -35,6 +35,7 @@ function onInit() {
     gCanvasCopy = document.querySelector('#canvas-copy')
     gCtxCopy = gCanvasCopy.getContext('2d')
     onmousemove = onMouseMove
+    window.addEventListener('touchmove', onMouseMove)
     window.addEventListener('keydown', onKeyDown)
     createGallery()
     createSavedGallery()
@@ -147,7 +148,7 @@ function onAddCaption(ratio = getRatio()) {
     }
     const captionContainer =
         `<section id="caption-container${gCount}" class="caption-container flex flex-column align-center">
-            <div class="move" id="move${gCount}" onmousedown="onMouseDown(this)" style="background-image: url('images/move.png');"></div>
+            <div class="move" id="move${gCount}" ontouchstart="onMouseDown(this)" onmousedown="onMouseDown(this)" style="background-image: url('images/move.png');"></div>
             <div id="canvas-text${gCount}" role="textbox" contenteditable="true" class="canvas-text"
             oninput="updateForm(this)" onclick="updateForm(this); setCurrContainer(this)">Enter Caption</div>
         </section>`
@@ -210,6 +211,7 @@ function _setContext(elCapt) {
 }
 
 function onMouseDown() {
+    if (!getCurrContainer()) return
     gMouseDown = true
     const container = getCurrContainer().element
     gMoveDif.x = parseFloat(container.offsetLeft) - gPos.x
@@ -221,8 +223,16 @@ function onMouseUp() {
 }
 
 function onMouseMove(ev, ratio = getRatio()) {
-    gPos.x = ev.x
-    gPos.y = ev.y
+    if (ev.type.includes('touch')) {
+        if (gMouseDown) {
+            ev.preventDefault()
+        }
+        gPos.x = ev.touches[0].pageX
+        gPos.y = ev.touches[0].pageY
+    } else {
+        gPos.x = ev.x
+        gPos.y = ev.y
+    }
     if (gMouseDown) {
         const drawContainer = getCurrContainer()
         const container = drawContainer.element
@@ -306,13 +316,13 @@ function createSavedGallery() {
 
 function onClickHome() {
     onResetMeme()
-    
     document.querySelector('.main-gallery').classList.remove('hide')
     document.querySelector('.modal-download').classList.add('hide')
     document.querySelector('.saved-gallery').classList.add('hide')
     document.querySelector('.editor').classList.add('hide')
     window.removeEventListener('resize', onResize)
     window.removeEventListener('mouseup', onMouseUp)
+    window.removeEventListener('touchend', onMouseUp)
 }
 
 function onClickSaved() {
@@ -323,6 +333,7 @@ function onClickSaved() {
     document.querySelector('.editor').classList.add('hide')
     window.removeEventListener('resize', onResize)
     window.removeEventListener('mouseup', onMouseUp)
+    window.removeEventListener('touchend', onMouseUp)
 }
 
 function onResetMeme() {
@@ -345,6 +356,7 @@ function onSelectImage(imgId) {
     document.querySelector('.editor').classList.remove('hide')
     window.addEventListener('resize', onResize)
     window.addEventListener('mouseup', onMouseUp)
+    window.addEventListener('touchend', onMouseUp)
     onResize()
 }
 
@@ -371,6 +383,7 @@ function onSelectSavedImg(savedId) {
         document.querySelector('.editor').classList.remove('hide')
         window.addEventListener('resize', onResize)
         window.addEventListener('mouseup', onMouseUp)
+        window.addEventListener('touchend', onMouseUp)
         onResize()
     }
     img.src = memeContainer.origSrc

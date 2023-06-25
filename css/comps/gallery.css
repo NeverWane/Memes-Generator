@@ -4,6 +4,7 @@
     flex-wrap: wrap;
     gap: 2rem;
     margin-inline: 2rem;
+    padding: 0;
 }
 
 .image-container {

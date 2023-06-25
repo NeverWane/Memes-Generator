@@ -3,6 +3,7 @@
     align-items: start;
     justify-content: center;
     padding-block-start: 5px;
+    touch-action: none;
 }
 
 .caption-container {
