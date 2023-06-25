@@ -1,9 +1,10 @@
 :root {
-    --header-height: 10%;
-    --content-height: 90%;
+    --header-height: 80px;
+    --content-height: 1fr;
 
     /* PALLETTE */
     --clr-bg: rgb(38, 46, 46);
+    --clr-bg-trans: rgb(38, 46, 46, 0.7);
     --clr-header: rgb(24, 31, 31);
     --clr-editor: rgb(56, 71, 71);
     --clr-editor-border: rgb(114, 113, 113);

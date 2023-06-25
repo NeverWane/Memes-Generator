@@ -141,6 +141,10 @@ function onRemoveDraw() {
 }
 
 function onAddCaption(ratio = getRatio()) {
+    const draw = _getCurrentDraw()
+    if (draw && !draw.innerText) {
+        onRemoveDraw()
+    }
     const captionContainer =
         `<section id="caption-container${gCount}" class="caption-container flex flex-column align-center">
             <div class="move" id="move${gCount}" onmousedown="onMouseDown(this)" style="background-image: url('images/move.png');"></div>
@@ -379,7 +383,7 @@ function createImageHTML(id) {
 
 function createSavedImgHTML(id) {
     return `<li class="image-container hide"
-            id="${id}" onclick="onSelectSavedImg(this.id)"><button id="X${id}" class="image-remove" onclick="onRemoveMeme(event, this.id)">X</button></li>`
+            id="${id}" onclick="onSelectSavedImg(this.id)"><button id="X${id}" class="image-remove" title="Delete meme" onclick="onRemoveMeme(event, this.id)">X</button></li>`
 }
 
 function loadLocalImg(path, element, readyFunc = onImageReady) {
@@ -419,7 +423,9 @@ function isInRange(min, max, num) {
 }
 
 function _getCurrentDraw() {
-    const currId = getCurrContainer().id
+    const currContainer = getCurrContainer()
+    if (!currContainer) return null
+    const currId = currContainer.id
     return document.getElementById(`canvas-text${currId}`)
 }
 

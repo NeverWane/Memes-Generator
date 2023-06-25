@@ -14,6 +14,9 @@
         <nav class="navbar">
             <ul class="nav-items flex align-center space-between">
                 <li class="nav-item logo nav-logo flex align-center" onclick="onClickHome()">memegen</li>
+                <div class="btn-menu-container flex align-center">
+                    <button class="btn-toggle-menu flex align-center" onclick="onToggleMenu()">
+                </div>
                 <ul class="nav-item nav-links flex align-center">
                     <li class="nav-link flex align-center" onclick="onClickHome()">gallery</li>
                     <li class="nav-link flex align-center" onclick="onClickSaved()">saved</li>
@@ -34,7 +37,11 @@
                 <button type="button" class="btn btn-download" onclick="onDownload()">Download</button>
                 <button type="button" class="btn btn-cancel" onclick="closePreview()">Cancel</button>
             </section>
-            <label class="label-resize" for="resize">Adjust Aspect Ratio:<input id="resize" class="resizer" name="resize" type="range" min="0" max="3" step="0.05" value="1" oninput="updatePreview(this.value)"></label>
+            <label class="label-resize flex align-center" for="resize">
+                Adjust aspect ratio
+                <input id="resize" class="resizer" name="resize" type="range" min="0" max="3" step="0.02" value="1"
+                    oninput="updatePreview(this.value)">
+            </label>
             <a download="canvas.jpeg" class="hide" id="download" href="#"></a>
             <canvas id="canvas-copy" class="canvas-copy"></canvas>
         </section>
@@ -75,6 +82,14 @@
             </section>
         </section>
     </main>
+
+    <script>
+        function onToggleMenu() {
+            const backdrop = document.querySelector(`.nav-links`)
+            document.querySelector(`.nav-links`).classList.toggle('shown')
+            document.querySelector(`.btn-toggle-menu`).classList.toggle('shown')
+        }
+    </script>
 
     <script src="js/service/storage.service.js"></script>
     <script src="js/service/memes.service.js"></script>

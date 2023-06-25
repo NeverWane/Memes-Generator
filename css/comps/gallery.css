@@ -23,7 +23,7 @@
 
 .image-container:hover {
     scale: 1.15;
-    box-shadow: -1px 1px 20px 4px whitesmoke inset;
+    box-shadow: -1px 1px 5px 1px whitesmoke inset;
 }
 
 .image-remove {

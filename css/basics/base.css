@@ -3,7 +3,6 @@
 }
 
 html {
-    height: 100vh;
     width: 100%;
     margin: 0;
     padding: 0;
@@ -15,6 +14,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: var(--clr-bg);
+    overflow-x: hidden;
 }
 
 li {
