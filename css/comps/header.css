@@ -25,6 +25,10 @@
     font-size: 1.5em;
 }
 
+.nav-links {
+    border-inline-end: 1px solid var(--clr-nav-border);
+}
+
 .nav-link {
     height: 100%;
     padding-inline: 1em;
@@ -36,6 +40,13 @@
 
 .nav-link:hover {
     color: var(--clr-link-hover);
+}
+
+.label-upload {
+    height: 100%;
+    width: 100%;
+    
+    cursor: pointer;
 }
 
 .logo {

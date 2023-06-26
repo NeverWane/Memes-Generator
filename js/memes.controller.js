@@ -361,11 +361,29 @@ function onResetMeme() {
     resetMeme()
 }
 
+function onUploadImage(ev) {
+    if (!(ev.target.files && ev.target.files[0])) return
+    const reader = new FileReader()
+    reader.onload = function (event) {
+        let img = new Image()
+        img.src = event.target.result
+        img.onload = () => {
+            gImages['upload'] = img
+            onSelectImage('upload')
+            ev.target.value = ''
+        }
+    }
+    reader.readAsDataURL(ev.target.files[0])
+}
+
 function onSelectImage(imgId) {
+    onResetMeme()
     createMeme(gImages[imgId])
     document.querySelector('.main-gallery').classList.add('hide')
     document.querySelector('.saved-gallery').classList.add('hide')
     document.querySelector('.editor').classList.remove('hide')
+    document.querySelector(`.nav-links`).classList.remove('shown')
+    document.querySelector(`.btn-toggle-menu`).classList.remove('shown')
     window.addEventListener('resize', onResize)
     window.addEventListener('mouseup', onMouseUp)
     window.addEventListener('touchend', onMouseUp)

@@ -20,7 +20,10 @@
                 <ul class="nav-item nav-links flex align-center">
                     <li class="nav-link flex align-center" onclick="onClickHome()">gallery</li>
                     <li class="nav-link flex align-center" onclick="onClickSaved()">saved</li>
-                    <li class="nav-link nav-new flex align-center">new</li>
+                    <li class="nav-link flex align-center">
+                        <label class="label-upload flex align-center" for="upload">new</label>
+                        <input id="upload" name="upload" class="hide" type="file" accept="image/jpeg, image/jpg, image/png" oninput="onUploadImage(event)">
+                    </li>
                 </ul>
             </ul>
         </nav>
